@@ -2,6 +2,7 @@ package ru.job4j.todo.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "item")
@@ -14,6 +15,10 @@ public class Item {
     private boolean done;
 
     public Item() {
+    }
+
+    public Item(String description) {
+        this(description, Timestamp.valueOf(LocalDateTime.now()), false);
     }
 
     public Item(String description, Timestamp created, boolean done) {

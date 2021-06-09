@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.persistence.HbmStorage;
+import ru.job4j.todo.service.ToDo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +19,9 @@ import java.util.Objects;
 
 @WebServlet("/items")
 public class ItemsListServlet extends HttpServlet {
+
+    private final ToDo toDo = ToDo.getInstance();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
@@ -28,9 +32,9 @@ public class ItemsListServlet extends HttpServlet {
         List<Item> list = null;
         try {
             if (Objects.equals(listType, "true") || Objects.equals(listType, "false")) {
-                list = (List<Item>) HbmStorage.getInstance().findByDone(Boolean.parseBoolean(listType));
+                list = (List<Item>) toDo.findByDone(Boolean.parseBoolean(listType));
             } else {
-                list = (List<Item>) HbmStorage.getInstance().getAllItems();
+                list = (List<Item>) toDo.getItems();
             }
         } catch (SQLException exception) {
             PrintWriter writer = resp.getWriter();

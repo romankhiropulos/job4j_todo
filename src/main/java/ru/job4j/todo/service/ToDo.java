@@ -48,13 +48,14 @@ public class ToDo {
         }
     }
 
-    public Collection<Item> getItems() {
+    public Collection<Item> getItems() throws SQLException {
         List<Item> items = null;
         try {
             items = (List<Item>) storage.getAllItems();
             items.sort(Comparator.comparing(Item::getCreated).thenComparing(Item::getDescription).reversed());
         } catch (SQLException exception) {
             LOG.error("SQL Exception: " + exception.getMessage(), exception);
+            throw exception;
         }
         return items;
     }
@@ -69,7 +70,7 @@ public class ToDo {
         return items;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         System.out.println(getInstance().getItems());
         getInstance().getItems().forEach(System.out::println);
     }
