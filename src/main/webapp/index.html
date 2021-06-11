@@ -28,7 +28,7 @@
     </script>
 
     <script>
-        function showItems() {
+        function showItems(notDone) {
             $.ajax({
                 type: "GET",
                 url: 'http://localhost:8080//job4j_todo/items',
@@ -42,18 +42,28 @@
                         let curCreated = respData[i]['created'];
                         let curDone = respData[i]['done'];
 
-                        if (curDone === true) {
-                            items += `<tr>
-                                          <td><input type="checkbox" name="place" value=${curId} checked></td>
-                                          <td>${curDescription}</td>
-                                          <td>${curCreated}</td>
-                                      </tr>`;
-                        } else {
-                            items += `<tr>
+                        if (notDone === true) {
+                            if (curDone === false) {
+                                items += `<tr>
                                           <td><input type="checkbox" name="place" value=${curId}></td>
                                           <td>${curDescription}</td>
                                           <td>${curCreated}</td>
                                       </tr>`;
+                            }
+                        } else {
+                            if (curDone === true) {
+                                items += `<tr>
+                                          <td><input type="checkbox" name="place" value=${curId} checked></td>
+                                          <td>${curDescription}</td>
+                                          <td>${curCreated}</td>
+                                      </tr>`;
+                            } else {
+                                items += `<tr>
+                                          <td><input type="checkbox" name="place" value=${curId}></td>
+                                          <td>${curDescription}</td>
+                                          <td>${curCreated}</td>
+                                      </tr>`;
+                            }
                         }
                     }
 
@@ -65,6 +75,7 @@
             })
         }
     </script>
+
     <script>
         function validateAndCreate() {
             let valid = true;
@@ -91,64 +102,81 @@
             return valid;
         }
     </script>
-<!--    <script>-->
-<!--        function changeDone() {-->
 
-<!--            let result = true;-->
-<!--            // let checked = [];-->
-<!--            // $('input:checkbox:checked').each(function () {-->
-<!--            //     checked.push($(this).val());-->
-<!--            // });-->
-<!--            // if (checked.length === 0) {-->
-<!--            //     result = false;-->
-<!--            //     alert("Нужно выбрать места для оформления заказа!")-->
-<!--            // } else {-->
-<!--            //     localStorage.setItem('chosenTickets', checked);-->
-<!--            //     console.log(localStorage.getItem('chosenTickets'));-->
-<!--            //     window.location.href = "http://localhost:8080//job4j_cinema/payment.html";-->
-<!--            // }-->
+    <script>
+        $('#showNotDone').click(function () {
+            console.log('showNotDone');
+            if ($(this).is(':checked')) {
+                showItems('true');
+            } else {
+                showItems('false');
+            }
+        });
+    </script>
 
-<!--            return result;-->
-<!--        }-->
-<!--    </script>-->
+    <!--    <script>-->
+    <!--        function changeDone() {-->
+
+    <!--            let result = true;-->
+    <!--            // let checked = [];-->
+    <!--            // $('input:checkbox:checked').each(function () {-->
+    <!--            //     checked.push($(this).val());-->
+    <!--            // });-->
+    <!--            // if (checked.length === 0) {-->
+    <!--            //     result = false;-->
+    <!--            //     alert("Нужно выбрать места для оформления заказа!")-->
+    <!--            // } else {-->
+    <!--            //     localStorage.setItem('chosenTickets', checked);-->
+    <!--            //     console.log(localStorage.getItem('chosenTickets'));-->
+    <!--            //     window.location.href = "http://localhost:8080//job4j_cinema/payment.html";-->
+    <!--            // }-->
+
+    <!--            return result;-->
+    <!--        }-->
+    <!--    </script>-->
 
 </head>
 
 <body>
-    <div class="container" style="margin-top: 10px">
-            <h4 >
-                ToDoList
-            </h4>
-        <div class="row pt-3">
-                <form>
-<!--                    <div class="form-group">-->
-<!--&lt;!&ndash;                        <label for="description">Новая задача</label>&ndash;&gt;-->
-<!--                        <p style="text-align: center"><input type="text" class="form-control" id="description" placeholder="описание задачи">-->
-<!--                            <button type="button" class="btn btn-success" onclick="return validateAndCreate()">Создать</button></p>-->
-<!--                    </div>-->
-                    <div style="width: 300px;" >
-                        <div class="t"><input type="text" class="form-control" id="description" placeholder="Новая задача"/></div>
-                        <input type="button" value="Добавить"  onclick="return validateAndCreate()"/>
-                    </div>
-               </form>
-           </div>
-       <div class="row pt-3">
-           <table class="table table-bordered">
-               <thead>
-               <tr>
-                   <th scope="col"> Готовность </th>
-                   <th scope="col"> Описание </th>
-                   <th scope="col"> Дата создания </th>
-               </tr>
-               </thead>
-               <tbody id="tbodyId">
+<div class="container" style="margin-top: 10px">
+    <h4>
+        ToDoList
+    </h4>
+    <div class="row pt-3">
+        <form>
+            <div style="width: 300px;">
+                <div class="t"><input type="text" class="form-control" id="description" placeholder="Новая задача"/>
+                </div>
+                <input type="button" value="Добавить" onclick="return validateAndCreate()"/>
+            </div>
+        </form>
+    </div>
+    <div class="row pt-3" style="margin-top: 20px">
 
-               </tbody>
-           </table>
-       </div>
-       <div class="row float-right">
-           <button type="button" class="btn btn-success" onclick="return changeDone()">Внести изменения</button>
-       </div>
-   </div>
+<!--        <div>-->
+<!--            <input type="checkbox" id="showNotDone"> Отобразить только невыполненные задачи-->
+<!--        </div>-->
+
+        <p class="form-check">
+            <label><input class="form-check-input" type="checkbox" id="showNotDone"/> Отобразить только невыполненные задачи</label>
+        </p>
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col"> Готовность</th>
+                <th scope="col"> Описание</th>
+                <th scope="col"> Дата создания</th>
+            </tr>
+            </thead>
+            <tbody id="tbodyId">
+
+            </tbody>
+        </table>
+    </div>
+    <!--       <div class="row float-right">-->
+    <!--           <button type="button" class="btn btn-success" onclick="return changeDone()">Внести изменения</button>-->
+    <!--       </div>-->
+</div>
 </body>
 </html>
