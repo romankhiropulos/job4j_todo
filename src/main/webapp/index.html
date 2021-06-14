@@ -19,121 +19,9 @@
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+    <script src="todoscripts.js"></script>
+
     <title>Todo List</title>
-
-    <script>
-        $(document).ready(function () {
-            showItems();
-        })
-    </script>
-
-    <script>
-        function showItems(notDone) {
-            $.ajax({
-                type: "GET",
-                url: 'http://localhost:8080//job4j_todo/items',
-                dataType: "json",
-                success: function (respData) {
-                    console.log(respData);
-                    let items = "";
-                    for (let i = 0; i < respData.length; i++) {
-                        let curId = respData[i]['id'];
-                        let curDescription = respData[i]['description'];
-                        let curCreated = respData[i]['created'];
-                        let curDone = respData[i]['done'];
-
-                        if (notDone === true) {
-                            if (curDone === false) {
-                                items += `<tr>
-                                          <td><input type="checkbox" name="place" value=${curId}></td>
-                                          <td>${curDescription}</td>
-                                          <td>${curCreated}</td>
-                                      </tr>`;
-                            }
-                        } else {
-                            if (curDone === true) {
-                                items += `<tr>
-                                          <td><input type="checkbox" name="place" value=${curId} checked></td>
-                                          <td>${curDescription}</td>
-                                          <td>${curCreated}</td>
-                                      </tr>`;
-                            } else {
-                                items += `<tr>
-                                          <td><input type="checkbox" name="place" value=${curId}></td>
-                                          <td>${curDescription}</td>
-                                          <td>${curCreated}</td>
-                                      </tr>`;
-                            }
-                        }
-                    }
-
-                    $('#tbodyId').html(items);
-                },
-                error: function (err) {
-                    alert(err);
-                }
-            })
-        }
-    </script>
-
-    <script>
-        function validateAndCreate() {
-            let valid = true;
-            let description = document.getElementById('description').value;
-            if (description === '') {
-                valid = false;
-                alert("Пожалуйста, заполните поле \"Задача\"");
-            } else {
-                $.ajax({
-                    type: "POST",
-                    url: 'http://localhost:8080//job4j_todo/item',
-                    data: {description: description},
-                    success: function (respData) {
-                        alert("New task created!");
-                        location.reload();
-                    },
-                    error: function (err) {
-                        alert(err);
-                        console.log(err);
-                        valid = false;
-                    }
-                })
-            }
-            return valid;
-        }
-    </script>
-
-    <script>
-        $('#showNotDone').click(function () {
-            console.log('showNotDone');
-            if ($(this).is(':checked')) {
-                showItems('true');
-            } else {
-                showItems('false');
-            }
-        });
-    </script>
-
-    <!--    <script>-->
-    <!--        function changeDone() {-->
-
-    <!--            let result = true;-->
-    <!--            // let checked = [];-->
-    <!--            // $('input:checkbox:checked').each(function () {-->
-    <!--            //     checked.push($(this).val());-->
-    <!--            // });-->
-    <!--            // if (checked.length === 0) {-->
-    <!--            //     result = false;-->
-    <!--            //     alert("Нужно выбрать места для оформления заказа!")-->
-    <!--            // } else {-->
-    <!--            //     localStorage.setItem('chosenTickets', checked);-->
-    <!--            //     console.log(localStorage.getItem('chosenTickets'));-->
-    <!--            //     window.location.href = "http://localhost:8080//job4j_cinema/payment.html";-->
-    <!--            // }-->
-
-    <!--            return result;-->
-    <!--        }-->
-    <!--    </script>-->
 
 </head>
 
@@ -153,12 +41,8 @@
     </div>
     <div class="row pt-3" style="margin-top: 20px">
 
-<!--        <div>-->
-<!--            <input type="checkbox" id="showNotDone"> Отобразить только невыполненные задачи-->
-<!--        </div>-->
-
         <p class="form-check">
-            <label><input class="form-check-input" type="checkbox" id="showNotDone"/> Отобразить только невыполненные задачи</label>
+            <label><input class="form-check-input" type="checkbox" id="showNotDone"/> Показать всё</label>
         </p>
 
         <table class="table table-bordered">
@@ -174,9 +58,6 @@
             </tbody>
         </table>
     </div>
-    <!--       <div class="row float-right">-->
-    <!--           <button type="button" class="btn btn-success" onclick="return changeDone()">Внести изменения</button>-->
-    <!--       </div>-->
 </div>
 </body>
 </html>
