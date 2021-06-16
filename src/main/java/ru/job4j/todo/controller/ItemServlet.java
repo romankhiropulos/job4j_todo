@@ -21,7 +21,7 @@ public class ItemServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         try {
-            toDo.saveItem(new Item( req.getParameter("description")));
+            toDo.saveItem(new Item(req.getParameter("description")));
         } catch (SQLException exception) {
             PrintWriter writer = resp.getWriter();
             writer.println("Data base problem");
