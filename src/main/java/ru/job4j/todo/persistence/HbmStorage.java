@@ -37,6 +37,15 @@ public class HbmStorage implements Storage, AutoCloseable {
     }
 
     @Override
+    public void updateItem(Item item) throws SQLException {
+        Session session = sf.openSession();
+        session.beginTransaction();
+        session.update(item);
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    @Override
     public Collection<Item> getAllItems() throws SQLException {
         Session session = sf.openSession();
         session.beginTransaction();
@@ -56,15 +65,6 @@ public class HbmStorage implements Storage, AutoCloseable {
         session.getTransaction().commit();
         session.close();
         return result;
-    }
-
-    @Override
-    public void updateItem(Item item) throws SQLException {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.update(item);
-        session.getTransaction().commit();
-        session.close();
     }
 
     @Override

@@ -18,9 +18,6 @@ import java.util.Objects;
 
 @WebServlet("/items")
 public class ItemsListServlet extends HttpServlet {
-
-    private final ToDo toDo = ToDo.getInstance();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
@@ -31,9 +28,9 @@ public class ItemsListServlet extends HttpServlet {
         List<Item> list = null;
         try {
             if (Objects.equals(listType, "true") || Objects.equals(listType, "false")) {
-                list = (List<Item>) toDo.findByDone(Boolean.parseBoolean(listType));
+                list = (List<Item>) ToDo.getInstance().findByDone(Boolean.parseBoolean(listType));
             } else {
-                list = (List<Item>) toDo.getItems();
+                list = (List<Item>) ToDo.getInstance().getItems();
             }
         } catch (SQLException exception) {
             PrintWriter writer = resp.getWriter();
@@ -50,23 +47,5 @@ public class ItemsListServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
         writer.write(jsonResponse);
         writer.flush();
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        resp.setCharacterEncoding("UTF-8");
-//        resp.setContentType("application/json");
-//        resp.setHeader("cache-control", "no-cache");
-//
-//        GsonBuilder builder = new GsonBuilder();
-//        builder.setPrettyPrinting();
-//        Gson gson = builder.create();
-//
-//        List<Ticket> tickets = (List<Ticket>) cinema.getTickets();
-//        tickets.sort(Comparator.comparingInt(Ticket::getRow).thenComparing(Ticket::getCell));
-//        String jsonResponse = gson.toJson(tickets);
-//        PrintWriter writer = resp.getWriter();
-//        writer.write(jsonResponse);
-//        writer.flush();
     }
 }

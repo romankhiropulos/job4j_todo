@@ -37,11 +37,9 @@ public class ToDo {
         }
     }
 
-    public void updateItems(Collection<Item> items) throws SQLException {
+    public void updateItem(final Item item) throws SQLException {
         try {
-            for (Item item : items) {
-                storage.updateItem(item);
-            }
+             storage.updateItem(item);
         } catch (SQLException exception) {
             LOG.error("SQL Exception: " + exception.getMessage(), exception);
             throw exception;

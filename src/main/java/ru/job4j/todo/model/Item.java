@@ -27,6 +27,13 @@ public class Item {
         this.done = done;
     }
 
+    public Item(int id, String description, Timestamp created, boolean done) {
+        this.id = id;
+        this.description = description;
+        this.created = created;
+        this.done = done;
+    }
+
     public int getId() {
         return id;
     }

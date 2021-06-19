@@ -1,3 +1,10 @@
+function Item(id, description, created, done) {
+    this.id = id;
+    this.description = description;
+    this.created = created;
+    this.done = done;
+}
+
 $(document).ready(function () {
     showItems(false);
 });
@@ -10,37 +17,42 @@ function showItems(hasAllItems) {
         success: function (respData) {
 
             let items = "";
+            let itemsArr = [];
             for (let i = 0; i < respData.length; i++) {
                 let curId = respData[i]['id'];
                 let curDescription = respData[i]['description'];
                 let curCreated = respData[i]['created'];
                 let hasCurDone = respData[i]['done'];
+                let curItem = new Item(curId, curDescription, curCreated, hasCurDone);
+
+                itemsArr.push(curItem);
 
                 if (hasAllItems) {
                     if (hasCurDone) {
                         items += `<tr>
-                                          <td><input type="checkbox" name="place" value=${curId} checked></td>
-                                          <td>${curDescription}</td>
-                                          <td>${curCreated}</td>
+                                          <td><input type="checkbox" value=${curId} id="changeDoneItem" checked></td>
+                                          <td>${curItem.description}</td>
+                                          <td>${curItem.created}</td>
                                       </tr>`;
                     } else {
                         items += `<tr>
-                                          <td><input type="checkbox" name="place" value=${curId}></td>
-                                          <td>${curDescription}</td>
-                                          <td>${curCreated}</td>
+                                          <td><input type="checkbox" value=${curId} id="changeDoneItem"></td>
+                                          <td>${curItem.description}</td>
+                                          <td>${curItem.created}</td>
                                       </tr>`;
                     }
                 } else {
                     if (!hasCurDone) {
                         items += `<tr>
-                                          <td><input type="checkbox" name="place" value=${curId}></td>
-                                          <td>${curDescription}</td>
-                                          <td>${curCreated}</td>
+                                          <td><input type="checkbox" value=${curId} id="changeDoneItem"></td>
+                                          <td>${curItem.description}</td>
+                                          <td>${curItem.created}</td>
                                       </tr>`;
                     }
                 }
             }
 
+            localStorage.setItem('items', JSON.stringify(itemsArr));
             $('#tbodyId').html(items);
         },
         error: function (err) {
@@ -60,7 +72,7 @@ function validateAndCreate() {
             type: "POST",
             url: 'http://localhost:8080//job4j_todo/item',
             data: {description: description},
-            success: function (respData) {
+            success: function () {
                 alert("New task created!");
                 location.reload();
             },
@@ -84,25 +96,40 @@ $(document).ready(function() {
     });
 });
 
-// </script>
-//
-// <!--    <script>-->
-// <!--        function changeDone() {-->
-//
-// <!--            let result = true;-->
-// <!--            // let checked = [];-->
-// <!--            // $('input:checkbox:checked').each(function () {-->
-// <!--            //     checked.push($(this).val());-->
-// <!--            // });-->
-// <!--            // if (checked.length === 0) {-->
-// <!--            //     result = false;-->
-// <!--            //     alert("Нужно выбрать места для оформления заказа!")-->
-// <!--            // } else {-->
-// <!--            //     localStorage.setItem('chosenTickets', checked);-->
-// <!--            //     console.log(localStorage.getItem('chosenTickets'));-->
-// <!--            //     window.location.href = "http://localhost:8080//job4j_cinema/payment.html";-->
-// <!--            // }-->
-//
-// <!--            return result;-->
-// <!--        }-->
-// <!--    </script>-->
+$(document).on('click', '#changeDoneItem', function() {
+        let curId = $(this).val();
+        if ($(this).is(':checked')) {
+            updateItem(true, curId);
+        } else {
+            updateItem(false, curId);
+        }
+});
+
+function updateItem(hasDone, curId) {
+    let items = JSON.parse(localStorage.getItem('items'));
+    let curItem = null;
+    for (let i = 0; i < items.length; i++) {
+        if (items[i]['id'] == curId) {
+            let curId = items[i]['id'];
+            let curDescription = items[i]['description'];
+            let curCreated = items[i]['created'];
+            curItem = new Item(curId, curDescription, curCreated, hasDone);
+            break;
+        }
+    }
+
+    let strItem = JSON.stringify(curItem);
+    $.ajax({
+        type: "POST",
+        url: 'http://localhost:8080//job4j_todo/itemupdate',
+        data: {item: strItem},
+        success: function () {
+            location.reload();
+        },
+        error: function (err) {
+            alert(err);
+            console.log(err);
+            valid = false;
+        }
+    })
+}
