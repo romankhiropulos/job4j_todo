@@ -30,7 +30,8 @@ function showItems(hasAllItems) {
                 if (hasAllItems) {
                     if (hasCurDone) {
                         items += `<tr>
-                                          <td><input type="checkbox" value=${curId} id="changeDoneItem" checked></td>
+                                          <td><input type="checkbox" value=${curId} id="changeDoneItem"
+                                                                                       disabled checked></td>
                                           <td>${curItem.description}</td>
                                           <td>${curItem.created}</td>
                                       </tr>`;
