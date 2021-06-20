@@ -2,6 +2,7 @@ package ru.job4j.todo.persistence;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -10,7 +11,8 @@ import ru.job4j.todo.model.Item;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class HbmStorage implements Storage, AutoCloseable {
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
@@ -28,47 +30,65 @@ public class HbmStorage implements Storage, AutoCloseable {
 
     @Override
     public Item saveItem(Item item) throws SQLException {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.save(item);
-        session.getTransaction().commit();
-        session.close();
+        Integer generateIdentifier = (Integer) tx(session -> session.save(item));
+        item.setId(generateIdentifier);
         return item;
     }
 
     @Override
     public void updateItem(Item item) throws SQLException {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.update(item);
-        session.getTransaction().commit();
-        session.close();
+        tu(session -> session.update(item));
     }
 
     @Override
     public Collection<Item> getAllItems() throws SQLException {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List result = session.createQuery("from ru.job4j.todo.model.Item").list();
-        session.getTransaction().commit();
-        session.close();
-        return result;
+        return tx(session -> session.createQuery("from ru.job4j.todo.model.Item").list());
     }
 
     @Override
     public Collection<Item> findByDone(boolean key) throws SQLException {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        Query query = session.createQuery("from ru.job4j.todo.model.Item where done =: item_name ");
-        query.setParameter("item_name", key);
-        List result = query.list();
-        session.getTransaction().commit();
-        session.close();
-        return result;
+          return tx(
+                  session -> {
+                      final Query query = session.createQuery(
+                              "from ru.job4j.todo.model.Item where done =: item_name "
+                      );
+                      query.setParameter("item_name", key);
+                      return query.list();
+                  }
+          );
     }
 
     @Override
     public void close() throws Exception {
         StandardServiceRegistryBuilder.destroy(registry);
+    }
+
+    private <T> T tx(final Function<Session, T> command) {
+        final Session session = sf.openSession();
+        final Transaction tx = session.beginTransaction();
+        try {
+            T rsl = command.apply(session);
+            tx.commit();
+            return rsl;
+        } catch (final Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
+    }
+
+    private void tu(final Consumer<Session> command) {
+        final Session session = sf.openSession();
+        final Transaction tx = session.beginTransaction();
+        try {
+            command.accept(session);
+            tx.commit();
+        } catch (final Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
     }
 }
