@@ -7,10 +7,12 @@ CREATE TABLE item
     description VARCHAR   NOT NULL,
     created     TIMESTAMP NOT NULL,
     done        BOOLEAN   NOT NULL DEFAULT FALSE,
-    role_id int not null references j_user(id)
+    user_id     SERIAL    NOT NULL REFERENCES j_user (id)
 );
 
-create table j_user (
-                        id serial primary key,
-                        name varchar(2000)
+CREATE TABLE j_user
+(
+    id   SERIAL PRIMARY KEY,
+    login VARCHAR(2000),
+    password varchar(2000)
 );

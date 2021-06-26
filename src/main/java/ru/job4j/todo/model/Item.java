@@ -10,9 +10,16 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String description;
+
     private Timestamp created;
+
     private boolean done;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Item() {
     }
@@ -32,6 +39,14 @@ public class Item {
         this.description = description;
         this.created = created;
         this.done = done;
+    }
+
+    public Item(int id, String description, Timestamp created, boolean done, User user) {
+        this.id = id;
+        this.description = description;
+        this.created = created;
+        this.done = done;
+        this.user = user;
     }
 
     public int getId() {
@@ -66,6 +81,14 @@ public class Item {
         this.done = done;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -86,7 +109,10 @@ public class Item {
         if (!description.equals(item.description)) {
             return false;
         }
-        return created.equals(item.created);
+        if (!created.equals(item.created)) {
+            return false;
+        }
+        return user.equals(item.user);
     }
 
     @Override
@@ -95,6 +121,7 @@ public class Item {
         result = 31 * result + description.hashCode();
         result = 31 * result + created.hashCode();
         result = 31 * result + (done ? 1 : 0);
+        result = 31 * result + user.hashCode();
         return result;
     }
 
@@ -105,6 +132,7 @@ public class Item {
                 + ", description='" + description + '\''
                 + ", created=" + created
                 + ", done=" + done
+                + ", user=" + user
                 + '}';
     }
 }
