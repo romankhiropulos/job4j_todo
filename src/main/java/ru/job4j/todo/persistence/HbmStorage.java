@@ -8,6 +8,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 import ru.job4j.todo.model.Item;
+import ru.job4j.todo.model.User;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -56,6 +57,28 @@ public class HbmStorage implements Storage, AutoCloseable {
                       return query.list();
                   }
           );
+    }
+
+    @Override
+    public User findUserByLoginAndPassword(String login, String password) throws SQLException {
+        return tx(
+                session -> {
+                    final Query query = session.createQuery(
+                            "from ru.job4j.todo.model.User where login =: user_login"
+                                    +  " and password =: user_password"
+                    );
+                    query.setParameter("user_login", login);
+                    query.setParameter("user_password", password);
+                    return (User) query;
+                }
+        );
+    }
+
+    @Override
+    public User saveUser(User user) throws SQLException {
+        Integer generateIdentifier = (Integer) tx(session -> session.save(user));
+        user.setId(generateIdentifier);
+        return user;
     }
 
     @Override
