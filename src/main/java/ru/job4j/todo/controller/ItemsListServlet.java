@@ -38,14 +38,20 @@ public class ItemsListServlet extends HttpServlet {
             writer.flush();
         }
 
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
+        if (list == null) {
+            PrintWriter writer = resp.getWriter();
+            writer.println("Sorry, items not found!");
+            writer.flush();
+        } else {
+            GsonBuilder builder = new GsonBuilder();
+            builder.setPrettyPrinting();
 
-        Gson gson = builder.create();
-        String jsonResponse = gson.toJson(list);
+            Gson gson = builder.create();
+            String jsonResponse = gson.toJson(list);
 
-        PrintWriter writer = resp.getWriter();
-        writer.write(jsonResponse);
-        writer.flush();
+            PrintWriter writer = resp.getWriter();
+            writer.write(jsonResponse);
+            writer.flush();
+        }
     }
 }

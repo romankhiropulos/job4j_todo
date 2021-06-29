@@ -5,6 +5,11 @@ function Item(id, description, created, done) {
     this.done = done;
 }
 
+function User(login, password) {
+    this.login = login;
+    this.password = password;
+}
+
 $(document).ready(function () {
     showItems(false);
 });
@@ -87,7 +92,7 @@ function validateAndCreate() {
     return valid;
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     $('#showNotDone').click(function () {
         if ($(this).is(':checked')) {
             showItems(true);
@@ -97,13 +102,13 @@ $(document).ready(function() {
     });
 });
 
-$(document).on('click', '#changeDoneItem', function() {
-        let curId = $(this).val();
-        if ($(this).is(':checked')) {
-            updateItem(true, curId);
-        } else {
-            updateItem(false, curId);
-        }
+$(document).on('click', '#changeDoneItem', function () {
+    let curId = $(this).val();
+    if ($(this).is(':checked')) {
+        updateItem(true, curId);
+    } else {
+        updateItem(false, curId);
+    }
 });
 
 function updateItem(hasDone, curId) {
@@ -133,4 +138,72 @@ function updateItem(hasDone, curId) {
             valid = false;
         }
     })
+}
+
+function getInputUser() {
+    let login = document.getElementById('login').value;
+    let password = document.getElementById('password').value;
+    return new User(login, password);
+}
+
+function validateUserData() {
+    let valid = true;
+    let user = getInputUser();
+    // localStorage.setItem('newUser', user);
+    // console.log(localStorage.getItem('chosenTickets'));
+    if (user.login === '') {
+        valid = false;
+        alert("Нужно заполнить поле \"Логин\"");
+    } else if (user.password === '') {
+        valid = false;
+        alert("Нужно заполнить поле \"Пароль\"");
+    }
+    return valid;
+}
+
+function createUser() {
+    let isValid = validateUserData();
+    if (isValid) {
+        let strUser = JSON.stringify(getInputUser());
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:8080//job4j_todo/reg.do',
+            data: {user : strUser},
+            success: function () {
+                alert("New account created!");
+                location.reload();
+            },
+            error: function (err) {
+                alert(err);
+                console.log(err);
+                isValid = false;
+            }
+        })
+    }
+
+    return isValid;
+}
+
+function authUser() {
+    let isValid = validateUserData();
+    if (isValid) {
+        let user = getInputUser();
+        let strUser = JSON.stringify(user);
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:8080//job4j_todo/auth.do',
+            data: {user : strUser},
+            success: function () {
+                alert("User " + user.login + " is logged in!");
+                location.reload();
+            },
+            error: function (err) {
+                alert(err);
+                console.log(err);
+                isValid = false;
+            }
+        })
+    }
+
+    return isValid;
 }

@@ -1,7 +1,9 @@
 package ru.job4j.todo.controller;
 
+import com.sun.xml.bind.v2.TODO;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.persistence.HbmStorage;
+import ru.job4j.todo.service.ToDo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,16 +19,16 @@ import java.util.Objects;
 public class AuthServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-
         User user = null;
         try {
-            user = HbmStorage.getInstance().findUserByLoginAndPassword(login, password);
+            user = ToDo.getInstance().findUserByLoginAndPassword(login, password);
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        if (!Objects.isNull(user)) {
+        if (Objects.nonNull(user)) {
             HttpSession sc = req.getSession();
             sc.setAttribute("user", user);
             resp.sendRedirect(req.getContextPath() + "/index.html");

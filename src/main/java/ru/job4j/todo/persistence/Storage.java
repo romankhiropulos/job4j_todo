@@ -18,5 +18,7 @@ public interface Storage {
 
     User findUserByLoginAndPassword(String login, String password) throws SQLException;
 
+    User findUserByLogin(String login) throws SQLException;
+
     User saveUser(User user) throws SQLException;
 }

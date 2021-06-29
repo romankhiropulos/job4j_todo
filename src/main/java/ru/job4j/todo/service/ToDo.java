@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.job4j.todo.model.Item;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.persistence.HbmStorage;
 import ru.job4j.todo.persistence.Storage;
 
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class ToDo {
 
@@ -50,7 +52,9 @@ public class ToDo {
         List<Item> items = null;
         try {
             items = (List<Item>) storage.getAllItems();
-            items.sort(Comparator.comparing(Item::getCreated).thenComparing(Item::getDescription).reversed());
+            if (items != null) {
+                items.sort(Comparator.comparing(Item::getCreated).thenComparing(Item::getDescription).reversed());
+            }
         } catch (SQLException exception) {
             LOG.error("SQL Exception: " + exception.getMessage(), exception);
             throw exception;
@@ -58,14 +62,49 @@ public class ToDo {
         return items;
     }
 
-    public Collection<Item> findByDone(boolean key) {
-        Collection<Item> items = null;
+    public Collection<Item> findByDone(boolean key) throws SQLException {
+        List<Item> items = null;
         try {
-            items = storage.findByDone(key);
+            items = (List<Item>) storage.findByDone(key);
+            if (items != null) {
+                items.sort(Comparator.comparing(Item::getCreated).thenComparing(Item::getDescription).reversed());
+            }
         } catch (SQLException exception) {
             LOG.error("SQL Exception: " + exception.getMessage(), exception);
+            throw exception;
         }
         return items;
+    }
+
+    public User findUserByLogin(String login) throws SQLException {
+        User user = null;
+        try {
+            user = HbmStorage.getInstance().findUserByLogin(login);
+        } catch (SQLException exception) {
+            LOG.error("SQL Exception: " + exception.getMessage(), exception);
+            throw exception;
+        }
+        return user;
+    }
+
+    public User findUserByLoginAndPassword(String login, String password) throws SQLException {
+        User user = null;
+        try {
+            user = HbmStorage.getInstance().findUserByLoginAndPassword(login, password);
+        } catch (SQLException exception) {
+            LOG.error("SQL Exception: " + exception.getMessage(), exception);
+            throw exception;
+        }
+        return user;
+    }
+
+    public void saveUser(final User user) throws SQLException {
+        try {
+            storage.saveUser(user);
+        } catch (SQLException exception) {
+            LOG.error("SQL Exception: " + exception.getMessage(), exception);
+            throw exception;
+        }
     }
 
     public static void main(String[] args) throws SQLException {
