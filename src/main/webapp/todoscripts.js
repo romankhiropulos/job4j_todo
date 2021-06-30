@@ -169,8 +169,9 @@ function createUser() {
             type: "POST",
             url: 'http://localhost:8080//job4j_todo/reg.do',
             data: {user : strUser},
-            success: function () {
+            success: function(curUserLogin) {
                 alert("New account created!");
+                localStorage.setItem('curUser', curUserLogin);
                 location.reload();
             },
             error: function (err) {
