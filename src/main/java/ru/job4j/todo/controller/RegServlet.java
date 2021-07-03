@@ -1,7 +1,6 @@
 package ru.job4j.todo.controller;
 
 import com.google.gson.Gson;
-import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.ToDo;
 

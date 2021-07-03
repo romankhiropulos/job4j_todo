@@ -69,7 +69,7 @@ public class HbmStorage implements Storage, AutoCloseable {
                     );
                     query.setParameter("user_login", login);
                     query.setParameter("user_password", password);
-                    return (User) query;
+                    return (User) query.list().get(0);
                 }
         );
     }
@@ -82,7 +82,7 @@ public class HbmStorage implements Storage, AutoCloseable {
                             "from ru.job4j.todo.model.User where login =: user_login"
                     );
                     query.setParameter("user_login", login);
-                    return (User) query;
+                    return (User) query.list().get(0);
                 }
         );
     }
