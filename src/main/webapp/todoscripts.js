@@ -102,6 +102,15 @@ $(document).ready(function () {
     });
 });
 
+$(document).ready(function () {
+    let curLogin = localStorage.getItem('curUser');
+    if (curLogin !== null) {
+        $('#curLogin').after(`<p><a href="auth.html">${curLogin}</a></p>`);
+    } else {
+        $('#curLogin').after(`<a href="auth.html">Авторизация</a><a href="reg.html">Регистрация</a>`);
+    }
+})
+
 $(document).on('click', '#changeDoneItem', function () {
     let curId = $(this).val();
     if ($(this).is(':checked')) {
@@ -169,10 +178,15 @@ function createUser() {
             type: "POST",
             url: 'http://localhost:8080//job4j_todo/reg.do',
             data: {user : strUser},
-            success: function(curUserLogin) {
-                alert("New account created!");
-                localStorage.setItem('curUser', curUserLogin);
-                location.reload();
+            dataType: "json",
+            success: function(response) {
+                let login = response.login;
+                if (login !== undefined) {
+                    localStorage.setItem('curUser', login);
+                    window.location.replace("index.html");
+                } else {
+                    alert(response);
+                }
             },
             error: function (err) {
                 alert(err);

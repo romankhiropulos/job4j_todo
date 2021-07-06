@@ -30,9 +30,10 @@ public class RegServlet extends HttpServlet {
             } else {
                 ToDo.getInstance().saveUser(user);
                 HttpSession sc = req.getSession();
-                sc.setAttribute("user", user.getLogin());
+                sc.setAttribute("user", user);
+                String jsonResponse = gson.toJson(user);
                 PrintWriter writer = resp.getWriter();
-                writer.println(user.getLogin());
+                writer.println(jsonResponse);
                 writer.flush();
             }
         } catch (SQLException exception) {
@@ -40,6 +41,6 @@ public class RegServlet extends HttpServlet {
             writer.println("Data base problem");
             writer.flush();
         }
-        resp.sendRedirect(req.getContextPath() + "/index.html");
+//        resp.sendRedirect(req.getContextPath() + "/index.html");
     }
 }

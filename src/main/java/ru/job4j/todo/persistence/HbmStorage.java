@@ -12,6 +12,7 @@ import ru.job4j.todo.model.User;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -69,7 +70,8 @@ public class HbmStorage implements Storage, AutoCloseable {
                     );
                     query.setParameter("user_login", login);
                     query.setParameter("user_password", password);
-                    return (User) query.list().get(0);
+                    List users = query.list();
+                    return users.size() == 1 ? (User) query.list().get(0) : null;
                 }
         );
     }
@@ -82,7 +84,8 @@ public class HbmStorage implements Storage, AutoCloseable {
                             "from ru.job4j.todo.model.User where login =: user_login"
                     );
                     query.setParameter("user_login", login);
-                    return (User) query.list().get(0);
+                    List users = query.list();
+                    return users.size() == 1 ? (User) query.list().get(0) : null;
                 }
         );
     }

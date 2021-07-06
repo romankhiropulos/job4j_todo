@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 public class HbmStorageTest {
 
-    private static final User expectedUser = new User(1, "roman@local", "password");
+    private static final User EXPECTED_USER = new User(1, "roman@local", "password");
 
     private static final Storage INST = new HbmStorage();
 
@@ -22,14 +22,14 @@ public class HbmStorageTest {
     public void findUserByLoginAndPassword() throws SQLException {
         User actualUser = null;
         actualUser = INST.findUserByLoginAndPassword("roman@local", "password");
-        assertEquals(expectedUser, actualUser);
+        assertEquals(EXPECTED_USER, actualUser);
     }
 
     @Test
     public void findUserByLogin() throws SQLException {
         User actualUser = null;
         actualUser = INST.findUserByLogin("roman@local");
-        assertEquals(expectedUser, actualUser);
+        assertEquals(EXPECTED_USER, actualUser);
     }
 
     @Test
