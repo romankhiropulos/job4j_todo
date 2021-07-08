@@ -76,15 +76,19 @@ function validateAndCreate() {
     } else {
         $.ajax({
             type: "POST",
-            url: 'http://localhost:8080//job4j_todo/item',
+            url: 'http://localhost:8080//job4j_todo/item.do',
             data: {description: description},
             success: function () {
                 alert("New task created!");
                 location.reload();
             },
             error: function (err) {
-                alert(err);
-                console.log(err);
+                if (err.status === 401) {
+                    alert("Wrong login or password!");
+                    window.location.replace("auth.html");
+                }
+                alert(err.responseText);
+                console.log(err.responseText);
                 valid = false;
             }
         })
@@ -144,7 +148,6 @@ function updateItem(hasDone, curId) {
         error: function (err) {
             alert(err);
             console.log(err);
-            valid = false;
         }
     })
 }
@@ -189,8 +192,7 @@ function createUser() {
                 }
             },
             error: function (err) {
-                alert(err);
-                console.log(err);
+                alert(err.status);
                 isValid = false;
             }
         })
@@ -208,13 +210,23 @@ function authUser() {
             type: "POST",
             url: 'http://localhost:8080//job4j_todo/auth.do',
             data: {user : strUser},
-            success: function () {
-                alert("User " + user.login + " is logged in!");
-                location.reload();
+            dataType: "json",
+            success: function(response) {
+                let login = response.login;
+                if (login !== undefined) {
+                    localStorage.setItem('curUser', login);
+                    window.location.replace("index.html");
+                } else {
+                    alert(response);
+                }
             },
             error: function (err) {
-                alert(err);
-                console.log(err);
+                if (err.status === 401) {
+                    alert("Wrong login or password!");
+                    window.location.replace("auth.html");
+                } else {
+                    alert(err.status);
+                }
                 isValid = false;
             }
         })
