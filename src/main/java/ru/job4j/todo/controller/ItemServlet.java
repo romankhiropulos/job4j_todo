@@ -1,6 +1,7 @@
 package ru.job4j.todo.controller;
 
 import ru.job4j.todo.model.Item;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.ToDo;
 
 import javax.servlet.ServletException;
@@ -18,7 +19,12 @@ public class ItemServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         try {
-            ToDo.getInstance().saveItem(new Item(req.getParameter("description")));
+            ToDo.getInstance().saveItem(
+                    new Item(
+                            req.getParameter("description"),
+                            (User) req.getSession().getAttribute("user")
+                    )
+            );
         } catch (SQLException exception) {
             PrintWriter writer = resp.getWriter();
             writer.println("Data base problem");

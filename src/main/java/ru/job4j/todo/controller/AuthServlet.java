@@ -8,10 +8,7 @@ import ru.job4j.todo.service.ToDo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -47,9 +44,17 @@ public class AuthServlet extends HttpServlet {
                     Objects.requireNonNull(authUser).getPassword()
             );
             if (Objects.nonNull(dbUser)) {
-                HttpSession sc = req.getSession(true);
+                HttpSession sc = req.getSession();
+                if (req.getParameter("JSESSIONID") != null) {
+                    Cookie userCookie = new Cookie("JSESSIONID", req.getParameter("JSESSIONID"));
+                    resp.addCookie(userCookie);
+                } else {
+                    String sessionId = sc.getId();
+                    Cookie userCookie = new Cookie("JSESSIONID", sessionId);
+                    resp.addCookie(userCookie);
+                }
+                dbUser.setPassword("secret");
                 sc.setAttribute("user", dbUser);
-                String idSess = sc.getId();
                 resp.sendRedirect(req.getContextPath() + "/auth.do");
             } else {
                 resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);

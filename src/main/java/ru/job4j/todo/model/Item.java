@@ -25,8 +25,9 @@ public class Item {
     public Item() {
     }
 
-    public Item(String description) {
+    public Item(String description, User user) {
         this(description, Timestamp.valueOf(LocalDateTime.now()), false);
+        this.user = user;
     }
 
     public Item(String description, Timestamp created, boolean done) {

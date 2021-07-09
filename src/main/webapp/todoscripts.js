@@ -137,18 +137,16 @@ function updateItem(hasDone, curId) {
             break;
         }
     }
-
     let strItem = JSON.stringify(curItem);
     $.ajax({
         type: "POST",
-        url: 'http://localhost:8080//job4j_todo/itemupdate',
+        url: 'http://localhost:8080//job4j_todo/itemupdate.do',
         data: {item: strItem},
         success: function () {
             location.reload();
         },
         error: function (err) {
-            alert(err);
-            console.log(err);
+            errorHandler(err);
         }
     })
 }
@@ -162,8 +160,6 @@ function getInputUser() {
 function validateUserData() {
     let valid = true;
     let user = getInputUser();
-    // localStorage.setItem('newUser', user);
-    // console.log(localStorage.getItem('chosenTickets'));
     if (user.login === '') {
         valid = false;
         alert("Нужно заполнить поле \"Логин\"");
@@ -216,29 +212,33 @@ function authUser() {
                 let login = response.login;
                 if (login !== undefined) {
                     sessionStorage.setItem('curUser', login);
-                    window.location.replace("index.html");
+                    window.location.href = "index.html";
                 } else {
                     alert(response);
                 }
             },
-            error: function (err) {
-                switch (err.status) {
-                    case 401:
-                        alert("Wrong login or password!");
-                        break;
-                    case 400:
-                        alert("Bad request!");
-                        break;
-                    case 500:
-                        alert("Internal server error!");
-                        break;
-                    default:
-                        alert(err.responseText);
-                }
+            error: function(err) {
+                errorHandler(err);
                 isValid = false;
             }
         })
     }
-
     return isValid;
+}
+
+function errorHandler(err) {
+    switch (err.status) {
+        case 401:
+            alert("Wrong login or password!");
+            break;
+        case 400:
+            alert("Bad request!");
+            break;
+        case 500:
+            alert("Internal server error!");
+            break;
+        default:
+            alert(err.responseText);
+            console.log(err.responseText);
+    }
 }

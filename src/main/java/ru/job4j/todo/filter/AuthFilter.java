@@ -45,8 +45,8 @@ public class AuthFilter implements Filter {
             chain.doFilter(sreq, sresp);
             return;
         }
-        HttpSession sc = req.getSession(false);
-        if (sc.getAttribute("user") == null) {
+//        HttpSession sc = req.getSession(false);
+        if (req.getSession().getAttribute("user") == null) {
             resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
