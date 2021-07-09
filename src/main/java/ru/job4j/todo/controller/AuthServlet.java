@@ -20,6 +20,22 @@ import java.util.Objects;
 @WebServlet("/auth.do")
 public class AuthServlet extends HttpServlet {
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json");
+        resp.setHeader("cache-control", "no-cache");
+
+        HttpSession sc = req.getSession(false);
+        User dbUser = (User) sc.getAttribute("user");
+
+        Gson gson = new Gson();
+        String jsonResponse = gson.toJson(dbUser);
+        PrintWriter writer = resp.getWriter();
+        writer.println(jsonResponse);
+        writer.flush();
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         try {
@@ -31,23 +47,17 @@ public class AuthServlet extends HttpServlet {
                     Objects.requireNonNull(authUser).getPassword()
             );
             if (Objects.nonNull(dbUser)) {
-                HttpSession sc = req.getSession();
+                HttpSession sc = req.getSession(true);
                 sc.setAttribute("user", dbUser);
-                String jsonResponse = gson.toJson(dbUser);
-                PrintWriter writer = resp.getWriter();
-                writer.println(jsonResponse);
-                writer.flush();
+                String idSess = sc.getId();
+                resp.sendRedirect(req.getContextPath() + "/auth.do");
             } else {
                 resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             }
         } catch (NullPointerException exception) {
-            PrintWriter writer = resp.getWriter();
-            writer.println("Data from request problem!");
-            writer.flush();
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (SQLException exception) {
-            PrintWriter writer = resp.getWriter();
-            writer.println("Data base problem!");
-            writer.flush();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }

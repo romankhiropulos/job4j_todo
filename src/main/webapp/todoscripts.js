@@ -67,7 +67,7 @@ function showItems(hasAllItems) {
     })
 }
 
-function validateAndCreate() {
+function createItem() {
     let valid = true;
     let description = document.getElementById('description').value;
     if (description === '') {
@@ -84,11 +84,12 @@ function validateAndCreate() {
             },
             error: function (err) {
                 if (err.status === 401) {
-                    alert("Wrong login or password!");
+                    alert("Only authorized users can create tasks!");
                     window.location.replace("auth.html");
+                } else {
+                    alert(err.responseText);
+                    console.log(err.responseText);
                 }
-                alert(err.responseText);
-                console.log(err.responseText);
                 valid = false;
             }
         })
@@ -107,7 +108,7 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    let curLogin = localStorage.getItem('curUser');
+    let curLogin = sessionStorage.getItem('curUser');
     if (curLogin !== null) {
         $('#curLogin').after(`<p><a href="auth.html">${curLogin}</a></p>`);
     } else {
@@ -180,12 +181,12 @@ function createUser() {
         $.ajax({
             type: "POST",
             url: 'http://localhost:8080//job4j_todo/reg.do',
-            data: {user : strUser},
+            data: {user: strUser},
             dataType: "json",
-            success: function(response) {
+            success: function (response) {
                 let login = response.login;
                 if (login !== undefined) {
-                    localStorage.setItem('curUser', login);
+                    sessionStorage.setItem('curUser', login);
                     window.location.replace("index.html");
                 } else {
                     alert(response);
@@ -209,23 +210,30 @@ function authUser() {
         $.ajax({
             type: "POST",
             url: 'http://localhost:8080//job4j_todo/auth.do',
-            data: {user : strUser},
+            data: {user: strUser},
             dataType: "json",
-            success: function(response) {
+            success: function (response) {
                 let login = response.login;
                 if (login !== undefined) {
-                    localStorage.setItem('curUser', login);
+                    sessionStorage.setItem('curUser', login);
                     window.location.replace("index.html");
                 } else {
                     alert(response);
                 }
             },
             error: function (err) {
-                if (err.status === 401) {
-                    alert("Wrong login or password!");
-                    window.location.replace("auth.html");
-                } else {
-                    alert(err.status);
+                switch (err.status) {
+                    case 401:
+                        alert("Wrong login or password!");
+                        break;
+                    case 400:
+                        alert("Bad request!");
+                        break;
+                    case 500:
+                        alert("Internal server error!");
+                        break;
+                    default:
+                        alert(err.responseText);
                 }
                 isValid = false;
             }
