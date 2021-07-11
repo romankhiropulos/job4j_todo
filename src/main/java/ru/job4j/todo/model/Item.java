@@ -22,12 +22,16 @@ public class Item {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column (name = "user_login")
+    private String userLogin;
+
     public Item() {
     }
 
     public Item(String description, User user) {
         this(description, Timestamp.valueOf(LocalDateTime.now()), false);
         this.user = user;
+        this.userLogin = this.user.getLogin();
     }
 
     public Item(String description, Timestamp created, boolean done) {
@@ -89,6 +93,14 @@ public class Item {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
     }
 
     @Override

@@ -7,7 +7,8 @@ CREATE TABLE item
     description VARCHAR   NOT NULL,
     created     TIMESTAMP NOT NULL,
     done        BOOLEAN   NOT NULL DEFAULT FALSE,
-    user_id     SERIAL    NOT NULL REFERENCES j_user (id)
+    user_id     SERIAL    NOT NULL REFERENCES j_user (id),
+    user_login  VARCHAR   NOT NULL
 );
 
 CREATE TABLE j_user

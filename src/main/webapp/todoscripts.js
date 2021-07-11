@@ -1,8 +1,9 @@
-function Item(id, description, created, done) {
+function Item(id, description, created, done, user) {
     this.id = id;
     this.description = description;
     this.created = created;
     this.done = done;
+    this.user = user;
 }
 
 function User(login, password) {
@@ -24,35 +25,41 @@ function showItems(hasAllItems) {
             let items = "";
             let itemsArr = [];
             for (let i = 0; i < respData.length; i++) {
-                let curId = respData[i]['id'];
-                let curDescription = respData[i]['description'];
-                let curCreated = respData[i]['created'];
-                let hasCurDone = respData[i]['done'];
-                let curItem = new Item(curId, curDescription, curCreated, hasCurDone);
+                // let curId = respData[i]['id'];
+                // let curDescription = respData[i]['description'];
+                // let curCreated = respData[i]['created'];
+                // let hasCurDone = respData[i]['done'];
+                // let curUser = respData[i]['user'];
+                // let curUserId = respData[i]['userId'];
+                // let curUserLogin = respData[i]['userLogin'];
+                let curItem =respData[i];
 
                 itemsArr.push(curItem);
 
                 if (hasAllItems) {
-                    if (hasCurDone) {
+                    if (curItem.done) {
                         items += `<tr>
-                                          <td><input type="checkbox" value=${curId} id="changeDoneItem"
+                                          <td><input type="checkbox" value=${curItem.id} id="changeDoneItem"
                                                                                        disabled checked></td>
                                           <td>${curItem.description}</td>
                                           <td>${curItem.created}</td>
+                                          <td>${curItem.user.login}</td>
                                       </tr>`;
                     } else {
                         items += `<tr>
-                                          <td><input type="checkbox" value=${curId} id="changeDoneItem"></td>
+                                          <td><input type="checkbox" value=${curItem.id} id="changeDoneItem"></td>
                                           <td>${curItem.description}</td>
                                           <td>${curItem.created}</td>
+                                          <td>${curItem.user.login}</td>
                                       </tr>`;
                     }
                 } else {
-                    if (!hasCurDone) {
+                    if (!curItem.done) {
                         items += `<tr>
-                                          <td><input type="checkbox" value=${curId} id="changeDoneItem"></td>
+                                          <td><input type="checkbox" value=${curItem.id} id="changeDoneItem"></td>
                                           <td>${curItem.description}</td>
                                           <td>${curItem.created}</td>
+                                          <td>${curItem.user.login}</td>
                                       </tr>`;
                     }
                 }
@@ -62,7 +69,7 @@ function showItems(hasAllItems) {
             $('#tbodyId').html(items);
         },
         error: function (err) {
-            alert(err);
+            errorHandler(err);
         }
     })
 }
@@ -83,13 +90,7 @@ function createItem() {
                 location.reload();
             },
             error: function (err) {
-                if (err.status === 401) {
-                    alert("Only authorized users can create tasks!");
-                    window.location.replace("auth.html");
-                } else {
-                    alert(err.responseText);
-                    console.log(err.responseText);
-                }
+                errorHandler(err, "Only authorized users can create tasks!");
                 valid = false;
             }
         })
@@ -112,7 +113,7 @@ $(document).ready(function () {
     if (curLogin !== null) {
         $('#curLogin').after(`<p><a href="auth.html">${curLogin}</a></p>`);
     } else {
-        $('#curLogin').after(`<a href="auth.html">Авторизация</a><a href="reg.html">Регистрация</a>`);
+        $('#curLogin').after(`<a href="auth.html">Авторизация</a> | <a href="reg.html">Регистрация</a>`);
     }
 })
 
@@ -130,10 +131,14 @@ function updateItem(hasDone, curId) {
     let curItem = null;
     for (let i = 0; i < items.length; i++) {
         if (items[i]['id'] == curId) {
-            let curId = items[i]['id'];
-            let curDescription = items[i]['description'];
-            let curCreated = items[i]['created'];
-            curItem = new Item(curId, curDescription, curCreated, hasDone);
+            // let curId = items[i]['id'];
+            // let curDescription = items[i]['description'];
+            // let curCreated = items[i]['created'];
+            // let curUserId = items[i]['userId'];
+            // let curUserLogin = items[i]['userLogin'];
+            // curItem = new Item(curId, curDescription, curCreated, hasDone, curUserId, curUserLogin);
+            curItem = items[i];
+            curItem.done = hasDone;
             break;
         }
     }
@@ -146,7 +151,7 @@ function updateItem(hasDone, curId) {
             location.reload();
         },
         error: function (err) {
-            errorHandler(err);
+            errorHandler(err, "Only authorized users can update task status!");
         }
     })
 }
@@ -189,7 +194,7 @@ function createUser() {
                 }
             },
             error: function (err) {
-                alert(err.status);
+                errorHandler(err.status);
                 isValid = false;
             }
         })
@@ -217,8 +222,8 @@ function authUser() {
                     alert(response);
                 }
             },
-            error: function(err) {
-                errorHandler(err);
+            error: function (err) {
+                errorHandler(err, "Wrong login or password!");
                 isValid = false;
             }
         })
@@ -226,10 +231,11 @@ function authUser() {
     return isValid;
 }
 
-function errorHandler(err) {
+function errorHandler(err, authMsg) {
     switch (err.status) {
         case 401:
-            alert("Wrong login or password!");
+            alert(authMsg);
+            window.location.replace("auth.html");
             break;
         case 400:
             alert("Bad request!");
@@ -238,7 +244,7 @@ function errorHandler(err) {
             alert("Internal server error!");
             break;
         default:
-            alert(err.responseText);
-            console.log(err.responseText);
+            alert(err.status + err.responseText);
+            console.log(err.status + err.responseText);
     }
 }
