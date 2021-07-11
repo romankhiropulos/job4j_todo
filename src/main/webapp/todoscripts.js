@@ -25,17 +25,9 @@ function showItems(hasAllItems) {
             let items = "";
             let itemsArr = [];
             for (let i = 0; i < respData.length; i++) {
-                // let curId = respData[i]['id'];
-                // let curDescription = respData[i]['description'];
-                // let curCreated = respData[i]['created'];
-                // let hasCurDone = respData[i]['done'];
-                // let curUser = respData[i]['user'];
-                // let curUserId = respData[i]['userId'];
-                // let curUserLogin = respData[i]['userLogin'];
+
                 let curItem =respData[i];
-
                 itemsArr.push(curItem);
-
                 if (hasAllItems) {
                     if (curItem.done) {
                         items += `<tr>
@@ -131,12 +123,6 @@ function updateItem(hasDone, curId) {
     let curItem = null;
     for (let i = 0; i < items.length; i++) {
         if (items[i]['id'] == curId) {
-            // let curId = items[i]['id'];
-            // let curDescription = items[i]['description'];
-            // let curCreated = items[i]['created'];
-            // let curUserId = items[i]['userId'];
-            // let curUserLogin = items[i]['userLogin'];
-            // curItem = new Item(curId, curDescription, curCreated, hasDone, curUserId, curUserLogin);
             curItem = items[i];
             curItem.done = hasDone;
             break;
@@ -181,7 +167,7 @@ function createUser() {
         let strUser = JSON.stringify(getInputUser());
         $.ajax({
             type: "POST",
-            url: 'http://localhost:8080//job4j_todo/reg.do',
+            url: 'http://localhost:8080//job4j_todo/reg',
             data: {user: strUser},
             dataType: "json",
             success: function (response) {
@@ -194,7 +180,7 @@ function createUser() {
                 }
             },
             error: function (err) {
-                errorHandler(err.status);
+                errorHandler(err);
                 isValid = false;
             }
         })
@@ -210,7 +196,7 @@ function authUser() {
         let strUser = JSON.stringify(user);
         $.ajax({
             type: "POST",
-            url: 'http://localhost:8080//job4j_todo/auth.do',
+            url: 'http://localhost:8080//job4j_todo/auth',
             data: {user: strUser},
             dataType: "json",
             success: function (response) {
@@ -244,7 +230,7 @@ function errorHandler(err, authMsg) {
             alert("Internal server error!");
             break;
         default:
-            alert(err.status + err.responseText);
-            console.log(err.status + err.responseText);
+            alert(err.status + " " + err.responseText);
+            console.log(err.status + " " + err.responseText);
     }
 }

@@ -6,15 +6,12 @@ import ru.job4j.todo.service.ToDo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
-@WebServlet("/reg.do")
+@WebServlet("/reg")
 public class RegServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -30,6 +27,14 @@ public class RegServlet extends HttpServlet {
             } else {
                 ToDo.getInstance().saveUser(user);
                 HttpSession sc = req.getSession();
+                if (req.getParameter("JSESSIONID") != null) {
+                    Cookie userCookie = new Cookie("JSESSIONID", req.getParameter("JSESSIONID"));
+                    resp.addCookie(userCookie);
+                } else {
+                    String sessionId = sc.getId();
+                    Cookie userCookie = new Cookie("JSESSIONID", sessionId);
+                    resp.addCookie(userCookie);
+                }
                 sc.setAttribute("user", user);
                 String jsonResponse = gson.toJson(user);
                 PrintWriter writer = resp.getWriter();

@@ -14,23 +14,8 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Objects;
 
-@WebServlet("/auth.do")
+@WebServlet("/auth")
 public class AuthServlet extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("application/json");
-        resp.setHeader("cache-control", "no-cache");
-
-        HttpSession sc = req.getSession(false);
-        User dbUser = (User) sc.getAttribute("user");
-
-        Gson gson = new Gson();
-        String jsonResponse = gson.toJson(dbUser);
-        PrintWriter writer = resp.getWriter();
-        writer.println(jsonResponse);
-        writer.flush();
-    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -55,7 +40,11 @@ public class AuthServlet extends HttpServlet {
                 }
                 dbUser.setPassword("secret");
                 sc.setAttribute("user", dbUser);
-                resp.sendRedirect(req.getContextPath() + "/auth.do");
+
+                String jsonResponse = gson.toJson(dbUser);
+                PrintWriter writer = resp.getWriter();
+                writer.println(jsonResponse);
+                writer.flush();
             } else {
                 resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             }
