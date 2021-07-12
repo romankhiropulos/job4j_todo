@@ -86,13 +86,13 @@ public class ToDo {
         return user;
     }
 
-    public User findUserByLoginAndPassword(String login, String password) throws SQLException {
+    public User findUserByLoginAndPassword(String login, String password) {
         User user = null;
         try {
             user = HbmStorage.getInstance().findUserByLoginAndPassword(login, password);
         } catch (SQLException exception) {
             LOG.error("SQL Exception: " + exception.getMessage(), exception);
-            throw exception;
+//            throw exception;
         }
         return user;
     }

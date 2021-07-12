@@ -23,7 +23,8 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) sreq;
         HttpServletResponse resp = (HttpServletResponse) sresp;
-        if (req.getSession().getAttribute("user") == null) {
+        HttpSession sc = req.getSession();
+        if (sc.getAttribute("user") == null) {
             resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
