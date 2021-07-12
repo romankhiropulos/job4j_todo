@@ -18,7 +18,7 @@ $(document).ready(function () {
 function showItems(hasAllItems) {
     $.ajax({
         type: "GET",
-        url: 'http://localhost:8080//job4j_todo/items',
+        url: 'http://localhost:8080/job4j_todo/items',
         dataType: "json",
         success: function (respData) {
 
@@ -75,7 +75,7 @@ function createItem() {
     } else {
         $.ajax({
             type: "POST",
-            url: 'http://localhost:8080//job4j_todo/item.do',
+            url: 'http://localhost:8080/job4j_todo/item.do',
             data: {description: description},
             success: function () {
                 alert("New task created!");
@@ -131,7 +131,7 @@ function updateItem(hasDone, curId) {
     let strItem = JSON.stringify(curItem);
     $.ajax({
         type: "POST",
-        url: 'http://localhost:8080//job4j_todo/itemupdate.do',
+        url: 'http://localhost:8080/job4j_todo/itemupdate.do',
         data: {item: strItem},
         success: function () {
             location.reload();
@@ -167,7 +167,7 @@ function createUser() {
         let strUser = JSON.stringify(getInputUser());
         $.ajax({
             type: "POST",
-            url: 'http://localhost:8080//job4j_todo/reg',
+            url: 'http://localhost:8080/job4j_todo/reg',
             data: {user: strUser},
             dataType: "json",
             success: function (response) {
@@ -196,7 +196,7 @@ function authUser() {
         let strUser = JSON.stringify(user);
         $.ajax({
             type: "POST",
-            url: 'http://localhost:8080//job4j_todo/auth',
+            url: 'http://localhost:8080/job4j_todo/auth',
             data: {user: strUser},
             dataType: "json",
             success: function (response) {
