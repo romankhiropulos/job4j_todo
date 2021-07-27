@@ -31,14 +31,26 @@
         ToDoList
     </h4>
     <p id="curLogin"> </p>
-    <div class="row pt-3">
-        <form>
-            <div style="width: 300px;">
-                <div class="t"><input type="text" class="form-control" id="description" placeholder="Новая задача"/>
+    <div class="container pt-3">
+        <div class="row">
+            <div class="card" style="width: 100%">
+                <div class="card-header">
+                    Новое задание
                 </div>
-                <input type="button" value="Добавить" onclick="return createItem()"/>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="description">Описание</label>
+                            <input type="text" class="form-control" id="description" placeholder="Введите текст"/>
+                            <br>
+                            <label for="categorySelect">Категория<br></label>
+                            <select class="form-control" id="categorySelect" name="categorySelect" multiple> </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="return createItem()">Добавить</button>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
     <div class="row pt-3" style="margin-top: 20px">
 
@@ -53,6 +65,7 @@
                 <th scope="col"> Описание</th>
                 <th scope="col"> Дата создания</th>
                 <th scope="col"> Автор</th>
+                <th scope="col"> Категория</th>
             </tr>
             </thead>
             <tbody id="tbodyId">

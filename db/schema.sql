@@ -17,3 +17,9 @@ CREATE TABLE j_user
     login VARCHAR(2000),
     password varchar(2000)
 );
+
+CREATE TABLE category
+(
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(2000)
+);

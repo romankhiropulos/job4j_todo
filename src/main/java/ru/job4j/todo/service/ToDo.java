@@ -2,15 +2,14 @@ package ru.job4j.todo.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.persistence.HbmStorage;
 import ru.job4j.todo.persistence.Storage;
 
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class ToDo {
 
@@ -29,8 +28,16 @@ public class ToDo {
         return ToDo.Lazy.INST;
     }
 
-    public void saveItem(final Item item) throws SQLException {
+    public void saveItem(final Item item, String[] categoryIds) throws SQLException {
         try {
+            List<Category> categories = storage.getAllCategories();
+            for (Category category : categories) {
+                for (String catId : categoryIds) {
+                    if (Objects.equals(category.getId(), Integer.parseInt(catId))) {
+                        item.getCategories().add(category);
+                    }
+                }
+            }
             storage.saveItem(item);
         } catch (SQLException exception) {
             LOG.error("SQL Exception: " + exception.getMessage(), exception);

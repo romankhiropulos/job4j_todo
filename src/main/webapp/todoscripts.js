@@ -20,15 +20,20 @@ function showItems(hasAllItems) {
         type: "GET",
         url: 'http://localhost:8080/job4j_todo/items',
         dataType: "json",
+        contentType: "text/json;charset=utf-8",
         success: function (respData) {
 
             let items = "";
             let itemsArr = [];
             for (let i = 0; i < respData.length; i++) {
 
-                let curItem =respData[i];
+                let curItem = respData[i];
                 itemsArr.push(curItem);
+                let categories = "";
                 if (hasAllItems) {
+                    for (let i = 0; i < curItem.categories.length; i++) {
+                        categories += curItem.categories[i].name + " ";
+                    }
                     if (curItem.done) {
                         items += `<tr>
                                           <td><input type="checkbox" value=${curItem.id} id="changeDoneItem"
@@ -36,6 +41,8 @@ function showItems(hasAllItems) {
                                           <td>${curItem.description}</td>
                                           <td>${curItem.created}</td>
                                           <td>${curItem.user.login}</td>
+                                          <td>${categories}</td>
+                                          
                                       </tr>`;
                     } else {
                         items += `<tr>
@@ -43,15 +50,20 @@ function showItems(hasAllItems) {
                                           <td>${curItem.description}</td>
                                           <td>${curItem.created}</td>
                                           <td>${curItem.user.login}</td>
+                                          <td>${categories}</td>
                                       </tr>`;
                     }
                 } else {
+                    for (let i = 0; i < curItem.categories.length; i++) {
+                        categories += curItem.categories[i].name + " ";
+                    }
                     if (!curItem.done) {
                         items += `<tr>
                                           <td><input type="checkbox" value=${curItem.id} id="changeDoneItem"></td>
                                           <td>${curItem.description}</td>
                                           <td>${curItem.created}</td>
                                           <td>${curItem.user.login}</td>
+                                          <td>${categories}</td>
                                       </tr>`;
                     }
                 }
@@ -69,14 +81,20 @@ function showItems(hasAllItems) {
 function createItem() {
     let valid = true;
     let description = document.getElementById('description').value;
-    if (description === '') {
+    let cIds = $("#categorySelect").val();
+    if (description === '' || cIds.length === 0) {
         valid = false;
-        alert("Пожалуйста, заполните поле \"Задача\"");
+        alert("Пожалуйста, заполните все поля.");
     } else {
+        let strCIds = '';
+        for (let i = 0; i < cIds.length; i++) {
+            strCIds += cIds[i] + '_';
+        }
         $.ajax({
             type: "POST",
             url: 'http://localhost:8080/job4j_todo/item.do',
-            data: {description: description},
+            data: ({description: description,
+                    cIds: strCIds}),
             success: function () {
                 alert("New task created!");
                 location.reload();
@@ -89,6 +107,25 @@ function createItem() {
     }
     return valid;
 }
+
+$(document).ready(function () {
+    $.ajax({
+        type: "GET",
+        url: 'http://localhost:8080/job4j_todo/categories',
+        dataType: "json",
+        success: function (respData) {
+            let categories = "";
+            for (let i = 0; i < respData.length; i++) {
+                categories += "<option value=" + respData[i]['id'] + ">" + respData[i]['name'] + "</option>";
+                // categories += "<option>" + respData[i]['name'] + "</option>";
+            }
+            $('#categorySelect').html(categories);
+        },
+        error: function (err) {
+            alert(err);
+        }
+    })
+});
 
 $(document).ready(function () {
     $('#showNotDone').click(function () {

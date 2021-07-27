@@ -7,10 +7,12 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -44,7 +46,16 @@ public class HbmStorage implements Storage, AutoCloseable {
 
     @Override
     public Collection<Item> getAllItems() throws SQLException {
-        return tx(session -> session.createQuery("from ru.job4j.todo.model.Item").list());
+        return tx(session ->
+                session.createQuery(
+                        "select distinct i from Item i join fetch i.categories", Item.class
+                ).list()
+        );
+    }
+
+    @Override
+    public List<Category> getAllCategories() {
+        return tx(session -> session.createQuery("select c from Category c", Category.class).list());
     }
 
     @Override

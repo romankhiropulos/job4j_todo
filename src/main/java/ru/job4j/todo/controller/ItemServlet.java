@@ -18,12 +18,17 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
+        String description = req.getParameter("description");
+        String strCIds = req.getParameter("cIds");
+        String[] cIds = strCIds.split("_");
+        User curUser = (User) req.getSession().getAttribute("user");
         try {
             ToDo.getInstance().saveItem(
                     new Item(
-                            req.getParameter("description"),
-                            (User) req.getSession().getAttribute("user")
-                    )
+                            description,
+                            curUser
+                    ),
+                    cIds
             );
         } catch (SQLException exception) {
             PrintWriter writer = resp.getWriter();
