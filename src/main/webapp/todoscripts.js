@@ -114,7 +114,6 @@ $(document).ready(function () {
             let categories = "";
             for (let i = 0; i < respData.length; i++) {
                 categories += "<option value=" + respData[i]['id'] + ">" + respData[i]['name'] + "</option>";
-                // categories += "<option>" + respData[i]['name'] + "</option>";
             }
             $('#categorySelect').html(categories);
         },

@@ -2,7 +2,6 @@ package ru.job4j.todo.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.persistence.HbmStorage;
@@ -94,7 +93,6 @@ public class ToDo {
             user = HbmStorage.getInstance().findUserByLoginAndPassword(login, password);
         } catch (SQLException exception) {
             LOG.error("SQL Exception: " + exception.getMessage(), exception);
-//            throw exception;
         }
         return user;
     }
