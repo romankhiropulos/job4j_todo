@@ -54,6 +54,11 @@ public class HbmStorage implements Storage, AutoCloseable {
     }
 
     @Override
+    public Category findCategoryById(int id) {
+        return tx(session -> session.get(Category.class, id));
+    }
+
+    @Override
     public List<Category> getAllCategories() {
         return tx(session -> session.createQuery("select c from Category c", Category.class).list());
     }

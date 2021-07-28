@@ -25,4 +25,6 @@ public interface Storage {
     User saveUser(User user) throws SQLException;
 
     List<Category> getAllCategories();
+
+    Category findCategoryById(int id);
 }

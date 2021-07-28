@@ -86,10 +86,7 @@ function createItem() {
         valid = false;
         alert("Пожалуйста, заполните все поля.");
     } else {
-        let strCIds = '';
-        for (let i = 0; i < cIds.length; i++) {
-            strCIds += cIds[i] + '_';
-        }
+        let strCIds = JSON.stringify(cIds);
         $.ajax({
             type: "POST",
             url: 'http://localhost:8080/job4j_todo/item.do',

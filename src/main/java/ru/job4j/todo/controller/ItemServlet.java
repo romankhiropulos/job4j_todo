@@ -1,5 +1,6 @@
 package ru.job4j.todo.controller;
 
+import com.google.gson.Gson;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.ToDo;
@@ -20,7 +21,8 @@ public class ItemServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String description = req.getParameter("description");
         String strCIds = req.getParameter("cIds");
-        String[] cIds = strCIds.split("_");
+        Gson gson = new Gson();
+        String[] cIds = gson.fromJson(strCIds, String[].class);
         User curUser = (User) req.getSession().getAttribute("user");
         try {
             ToDo.getInstance().saveItem(

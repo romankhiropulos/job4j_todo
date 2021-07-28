@@ -1,7 +1,7 @@
 package ru.job4j.todo.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,8 @@ public class Item {
 
     private String description;
 
-    private Timestamp created;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
     private boolean done;
 
@@ -34,25 +35,25 @@ public class Item {
     }
 
     public Item(String description, User user) {
-        this(description, Timestamp.valueOf(LocalDateTime.now()), false);
+        this(description, new Date(System.currentTimeMillis()), false);
         this.user = user;
         this.userLogin = this.user.getLogin();
     }
 
-    public Item(String description, Timestamp created, boolean done) {
+    public Item(String description, Date created, boolean done) {
         this.description = description;
         this.created = created;
         this.done = done;
     }
 
-    public Item(int id, String description, Timestamp created, boolean done) {
+    public Item(int id, String description, Date created, boolean done) {
         this.id = id;
         this.description = description;
         this.created = created;
         this.done = done;
     }
 
-    public Item(int id, String description, Timestamp created, boolean done, User user) {
+    public Item(int id, String description, Date created, boolean done, User user) {
         this.id = id;
         this.description = description;
         this.created = created;
@@ -60,7 +61,7 @@ public class Item {
         this.user = user;
     }
 
-    public Item(int id, String description, Timestamp created, boolean done, User user, List<Category> categories) {
+    public Item(int id, String description, Date created, boolean done, User user, List<Category> categories) {
         this.id = id;
         this.description = description;
         this.created = created;
@@ -85,11 +86,11 @@ public class Item {
         this.description = description;
     }
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
