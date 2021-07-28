@@ -30,9 +30,6 @@ public class ToDo {
 
     public void saveItem(final Item item, String[] categoryIds) throws SQLException {
         try {
-//            for (String catId : categoryIds) {
-//                    item.getCategories().add(storage.findCategoryById(Integer.parseInt(catId)));
-//            }
             Arrays.stream(categoryIds).forEach(
                     catId -> item.getCategories().add(storage.findCategoryById(Integer.parseInt(catId)))
             );
